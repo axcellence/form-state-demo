@@ -2,8 +2,8 @@
 
 This repo is using React's `useFormStatus` hook to track the form's submission status, as well as RSC (React Server Components) and Server Actions to handle the server-side. It returns JSX from server-side form submission.
 
-
 ## RSC
+
 ```tsx
 // src/app/page.tsx
 
@@ -16,6 +16,7 @@ export default function Page() {
 ```
 
 ## Client component
+
 ```tsx
 // src/app/_components/form-state.tsx
 
@@ -27,7 +28,7 @@ export function FormState({ action }: Props) {
 
   return (
     <>
-      <form action={formAction} className="w-full">
+      <form action={formAction}>
         ...
       </form>
       {state}
@@ -37,6 +38,7 @@ export function FormState({ action }: Props) {
 ```
 
 ## Server action
+
 ```tsx
 // src/app/_components/actions.tsx
 
@@ -52,9 +54,7 @@ export async function validateEmail(currentState: any, formData: FormData) {
     return {
       errors: {
         email: (
-          <div className="text-sm italic">
-            An account with this email already exists.
-          </div>
+          <div>An account with this email already exists.</div>
         ),
       },
     };
