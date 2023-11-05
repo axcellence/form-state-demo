@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+### Form State Demo
 
-## Getting Started
+This repo is using React's `useFormStatus` hook to track the form's submission status, as well as RSC (React Server Components) and Server Actions to handle the server-side. It returns JSX from server-side form submission.
 
-First, run the development server:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## RSC
+```tsx
+// src/app/page.tsx
+
+import { FormState } from "./_components/form-state";
+import { action } from "./_components/actions";
+
+export default function Page() {
+  return <FormState action={action} />;
+}
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Client component
+```tsx
+// src/app/_components/form-state.tsx
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+"use client";
+import { useFormState } from "react-dom";
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+export function FormState({ action }: Props) {
+  const [state, formAction] = useFormState(action, initialState);
 
-## Learn More
+  return (
+    <>
+      <form action={formAction} className="w-full">
+        ...
+      </form>
+      {state}
+    </>
+  );
+}
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Server action
+```tsx
+// src/app/_components/actions.tsx
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+"use server";
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+export async function validateEmail(currentState: any, formData: FormData) {
+  "use server";
+  const email = formData.get("email");
 
-## Deploy on Vercel
+  ...
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+  if (...) {
+    return {
+      errors: {
+        email: (
+          <div className="text-sm italic">
+            An account with this email already exists.
+          </div>
+        ),
+      },
+    };
+  }
+}
+```
